@@ -1,12 +1,24 @@
-# React + Vite
+# Lights Out Game
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a simple implementation of the classic "Lights Out" puzzle game built with React.
 
-Currently, two official plugins are available:
+## Objective
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+The goal of the game is to turn all of the lights on the grid off.
 
-## Expanding the ESLint configuration
+## How to Play
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1.  The game is played on a grid of squares, each of which can be either "on" or "off".
+2.  When you click on a square, it toggles the state of that square and its adjacent (up, down, left, right) squares.
+3.  To win, you must find the right combination of clicks to turn all the squares "off".
+
+## Running the Project
+
+1.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
+2.  **Start the development server:**
+    ```bash
+    npm run dev
+    ```

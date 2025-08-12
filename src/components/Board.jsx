@@ -1,67 +1,116 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Square from './Square';
 
-export default function Board({ boardSize }) {
-    // Initialize the game board based on the boardSize prop
-    function emptyBoard (rows, cols) {
-        const etyboard = [];
-        for (let i = 0; i < rows; i++) {
-            const row = [];
-            for (let j = 0; j < cols; j++) {
-                row.push(
-                    <Square
-                        coord={`${i},${j}`}
-                        value={false}
-                        onSquareClick={handleClick}
-                    />);
-            }
-            etyboard.push(row);
-        }
-        console.log("Empty board created:", etyboard);
-        return etyboard;
-    }
-    const [board, setBoard] = useState(emptyBoard(boardSize, boardSize));
+// Helper function to create a new board state
+const createBoard = (size) => {
+  // Start with a completely off board.
+  let newBoard = Array.from({ length: size }, () => Array(size).fill(false));
 
-    function handleClick(coord) {
-        // Logic to handle square click, toggling the square and its neighbors
-        const [row, col] = coord.split(',').map(Number);
-        //console.log(`Square clicked: ${coord} at row ${row}, col ${col}`);
-        const newBoard = board.slice();
-        // Toggle adjacent squares: left, right, up, down
-        const directions = [
-            [0, 0], // current square
-            [-1, 0], // up
-            [1, 0], // down
-            [0, -1], // left
-            [0, 1] // right
-        ]
-        directions.forEach(([r, c]) => {
-            const newRow = row + r;
-            const newCol = col + c;
-            if (newRow >= 0 && newRow < boardSize && newCol >= 0 && newCol < boardSize) {
-                //console.log(`Toggling square at: ${newRow}, ${newCol}`);
-                newBoard[newRow][newCol] = <Square
-                    coord={`${newRow},${newCol}`}
-                    value={!board[newRow][newCol].props.value} // toggle the square value
-                    onSquareClick={handleClick}
-                />;
+  // A helper function to toggle a single light
+  const toggle = (board, r, c) => {
+    if (r >= 0 && r < size && c >= 0 && c < size) {
+      board[r][c] = !board[r][c];
+    }
+  };
+
+  // A helper function to simulate a click on the board state
+  const simulateClick = (board, r, c) => {
+    toggle(board, r, c);       // Clicked square
+    toggle(board, r, c - 1);   // Left
+    toggle(board, r, c + 1);   // Right
+    toggle(board, r - 1, c);   // Top
+    toggle(board, r + 1, c);   // Bottom
+  };
+
+  // To guarantee a solvable board, we start with a solved board and make random moves.
+  // Here, we'll make 10 random moves.
+  const clicks = new Set();
+  const maxClicks = Math.min(10, size * size); // Ensure we don't loop forever on small boards
+  while (clicks.size < maxClicks) {
+    const row = Math.floor(Math.random() * size);
+    const col = Math.floor(Math.random() * size);
+    clicks.add(`${row}-${col}`);
+  }
+
+  // Apply the random clicks to the board
+  clicks.forEach(coord => {
+    const [row, col] = coord.split('-').map(Number);
+    simulateClick(newBoard, row, col);
+  });
+
+  return newBoard;
+};
+
+const Board = ({ boardSize }) => {
+    const [board, setBoard] = useState(createBoard(boardSize));
+    const [hasWon, setHasWon] = useState(false);
+    const [clickCount, setClickCount] = useState(0);
+
+    // This effect hook re-creates the board when the size changes
+    useEffect(() => {
+        setBoard(createBoard(boardSize));
+        setHasWon(false); // Reset win state on resize
+        setClickCount(0); // Reset click count on resize
+    }, [boardSize]);
+
+    // Check for a win condition whenever the board changes
+    useEffect(() => {
+        const isGameWon = board.every(row => row.every(light => !light));
+        setHasWon(isGameWon);
+    }, [board]);
+
+    const handleSquareClick = (row, col) => {
+        if (hasWon) return; // Don't allow clicks if the game is won
+
+        setClickCount(prevCount => prevCount + 1);
+
+        let newBoard = board.map(arr => arr.slice());
+
+        const toggleLight = (r, c) => {
+            if (r >= 0 && r < boardSize && c >= 0 && c < boardSize) {
+                newBoard[r][c] = !newBoard[r][c];
             }
-        });
+        };
+
+        toggleLight(row, col);       // Clicked square
+        toggleLight(row, col - 1);   // Left
+        toggleLight(row, col + 1);   // Right
+        toggleLight(row - 1, col);   // Top
+        toggleLight(row + 1, col);   // Bottom
+
         setBoard(newBoard);
-    }
+    };
 
-    return (    
+    const handleNewGame = () => {
+        setBoard(createBoard(boardSize));
+        setClickCount(0);
+    };
+
+    return (
         <div>
-            <p className="">board</p>
-            {board.map((row, rowIndex) => (
-                <div key={rowIndex} className="board-row">
-                    {row.map((square, colIndex) => (
-                        <span key={`${rowIndex}-${colIndex}`} className="board-square">
-                            {square}
-                        </span>
+            <div className="game-info">
+                <p className="click-counter">Clicks: {clickCount}</p>
+            </div>
+            {hasWon ? (
+                <h1 className="win-message">You Won in {clickCount} clicks!</h1>
+            ) : null}
+                <div className="board">
+                    {board.map((row, r_idx) => (
+                        <div className="board-row" key={r_idx}>
+                            {row.map((isLit, c_idx) => (
+                                <Square
+                                    key={`${r_idx}-${c_idx}`}
+                                    isLit={isLit}
+                                    onClick={() => handleSquareClick(r_idx, c_idx)}
+                                />
+                            ))}
+                        </div>
                     ))}
                 </div>
-            ))}
+            
+            <button className="new-game-btn" onClick={handleNewGame}>New Game</button>
         </div>
-    )
-}
+    );
+};
+
+export default Board;

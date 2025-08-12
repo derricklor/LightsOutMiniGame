@@ -1,10 +1,9 @@
 
-export default function Square({ coord, value, onSquareClick }) {
-    const decoration = value ? 'on' : 'off';
+import React from 'react';
 
-    return (
-        <button className={'square ' + decoration} onClick={() => onSquareClick(coord)}>
-            {value}
-        </button>
-    );
-}
+const Square = ({ isLit, onClick }) => {
+  const className = `square ${isLit ? 'on' : 'off'}`;
+  return <button className={className} onClick={onClick}></button>;
+};
+
+export default Square;
