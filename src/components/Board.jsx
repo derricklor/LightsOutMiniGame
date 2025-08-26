@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Square from './Square';
 
 // Helper function to create a new board state
-const createBoard = (size) => {
+const createBoard = (size, numClicks) => {
   // Start with a completely off board.
   let newBoard = Array.from({ length: size }, () => Array(size).fill(false));
 
@@ -25,7 +25,7 @@ const createBoard = (size) => {
   // To guarantee a solvable board, we start with a solved board and make random moves.
   // Here, we'll make 10 random moves.
   const clicks = new Set();
-  const maxClicks = Math.min(10, size * size); // Ensure we don't loop forever on small boards
+  const maxClicks = Math.min(numClicks, size * size); // Ensure we don't loop forever on small boards
   while (clicks.size < maxClicks) {
     const row = Math.floor(Math.random() * size);
     const col = Math.floor(Math.random() * size);
@@ -42,13 +42,25 @@ const createBoard = (size) => {
 };
 
 const Board = ({ boardSize }) => {
-    const [board, setBoard] = useState(createBoard(boardSize));
+    const [board, setBoard] = useState(createBoard(boardSize,10));
     const [hasWon, setHasWon] = useState(false);
     const [clickCount, setClickCount] = useState(0);
 
     // This effect hook re-creates the board when the size changes
     useEffect(() => {
-        setBoard(createBoard(boardSize));
+        switch (boardSize) {
+            case 3:
+                setBoard(createBoard(3,4));
+                break;
+            case 4:
+                setBoard(createBoard(4,10));
+                break;
+            case 5:
+                setBoard(createBoard(5,15));
+                break;
+            default:
+                setBoard(createBoard(4,10));
+        }
         setHasWon(false); // Reset win state on resize
         setClickCount(0); // Reset click count on resize
     }, [boardSize]);
@@ -62,7 +74,7 @@ const Board = ({ boardSize }) => {
     const handleSquareClick = (row, col) => {
         if (hasWon) return; // Don't allow clicks if the game is won
 
-        setClickCount(prevCount => prevCount + 1);
+        setClickCount(clickCount + 1);
 
         let newBoard = board.map(arr => arr.slice());
 
@@ -82,21 +94,35 @@ const Board = ({ boardSize }) => {
     };
 
     const handleNewGame = () => {
-        setBoard(createBoard(boardSize));
-        setClickCount(0);
-    };
-
-    return (
-        <div>
+        switch (boardSize) {
+            case 3:
+                setBoard(createBoard(3,4));
+                break;
+            case 4:
+                setBoard(createBoard(4,10));
+                break;
+            case 5:
+                setBoard(createBoard(5,15));
+                break;
+                default:
+                    setBoard(createBoard(4,10));
+                }
+                setHasWon(false);
+                setClickCount(0);
+            };
+            
+            return (
+                <div className="dark:text-white">
             <div className="game-info">
-                <p className="click-counter">Clicks: {clickCount}</p>
+                <button className="bg-green-300 rounded hover:bg-green-500 dark:bg-green-700 dark:hover:bg-green-600" onClick={handleNewGame}>New Game</button>
+                <p className="click-counter dark:text-white">Clicks: {clickCount}</p>
             </div>
             {hasWon ? (
-                <h1 className="win-message">You Won in {clickCount} clicks!</h1>
+                <h1 className="mt-4 shadow-lg dark:text-white">You Won in {clickCount} clicks!</h1>
             ) : null}
-                <div className="board">
+                <div className="mt-5 border-2 border-gray-600 p-2.5 bg-gray-700 mx-auto w-fit">
                     {board.map((row, r_idx) => (
-                        <div className="board-row" key={r_idx}>
+                        <div className="flex gap-1.5 mb-1.5 last:mb-0" key={r_idx}>
                             {row.map((isLit, c_idx) => (
                                 <Square
                                     key={`${r_idx}-${c_idx}`}
@@ -108,7 +134,6 @@ const Board = ({ boardSize }) => {
                     ))}
                 </div>
             
-            <button className="new-game-btn" onClick={handleNewGame}>New Game</button>
         </div>
     );
 };
