@@ -111,29 +111,30 @@ const Board = ({ boardSize }) => {
                 setClickCount(0);
             };
             
-            return (
-                <div className="dark:text-white">
+    return (
+        <div className="dark:text-white">
             <div className="game-info">
-                <button className="bg-green-300 rounded hover:bg-green-500 dark:bg-green-700 dark:hover:bg-green-600" onClick={handleNewGame}>New Game</button>
+                <button className="bg-green-300 rounded mb-2 p-1 hover:bg-green-500 dark:bg-green-700 dark:hover:bg-green-600" 
+                onClick={handleNewGame}>New Game</button>
                 <p className="click-counter dark:text-white">Clicks: {clickCount}</p>
             </div>
             {hasWon ? (
                 <h1 className="mt-4 shadow-lg dark:text-white">You Won in {clickCount} clicks!</h1>
             ) : null}
-                <div className="mt-5 border-2 border-gray-600 p-2.5 bg-gray-700 mx-auto w-fit">
-                    {board.map((row, r_idx) => (
-                        <div className="flex gap-1.5 mb-1.5 last:mb-0" key={r_idx}>
-                            {row.map((isLit, c_idx) => (
-                                <Square
-                                    key={`${r_idx}-${c_idx}`}
-                                    isLit={isLit}
-                                    onClick={() => handleSquareClick(r_idx, c_idx)}
-                                />
-                            ))}
-                        </div>
-                    ))}
-                </div>
-            
+            <div className="mt-5 border-2 border-gray-600 p-2.5 bg-gray-700 mx-auto w-fit">
+                {board.map((row, r_idx) => (
+                    <div className="flex gap-1.5 mb-1.5 last:mb-0" key={r_idx}>
+                        {row.map((isLit, c_idx) => (
+                            <Square
+                                key={`${r_idx}-${c_idx}`}
+                                isLit={isLit}
+                                onClick={() => handleSquareClick(r_idx, c_idx)}
+                            />
+                        ))}
+                    </div>
+                ))}
+            </div>
+
         </div>
     );
 };

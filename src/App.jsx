@@ -42,21 +42,21 @@ export default function App() {
 
 			<h1>Lights Out Game</h1>
 			<p>Click on the lights to turn them on or off.</p>
-			<div className='flex m-4'>
+			<div className='flex m-4 gap-1 '>
 				<button
-					className="bg-gray-300 dark:bg-gray-400 m-1 rounded hover:cursor-pointer hover:bg-gray-400 dark:hover:bg-gray-300 min-w-[6rem]"
+					className="bg-gray-300 dark:bg-gray-400 rounded hover:cursor-pointer hover:bg-gray-400 dark:hover:bg-gray-300 min-w-[6rem]"
 					onClick={() => setboardSize(3)}
 				>
 					3x3
 				</button>
 				<button
-					className="bg-gray-300 dark:bg-gray-400 m-1 rounded hover:cursor-pointer hover:bg-gray-400 dark:hover:bg-gray-300 min-w-[6rem]"
+					className="bg-gray-300 dark:bg-gray-400 rounded hover:cursor-pointer hover:bg-gray-400 dark:hover:bg-gray-300 min-w-[6rem]"
 					onClick={() => setboardSize(4)}
 				>
 					4x4
 				</button>
 				<button
-					className="bg-gray-300 dark:bg-gray-400 m-1 rounded hover:cursor-pointer hover:bg-gray-400 dark:hover:bg-gray-300 min-w-[6rem]"
+					className="bg-gray-300 dark:bg-gray-400 rounded hover:cursor-pointer hover:bg-gray-400 dark:hover:bg-gray-300 min-w-[6rem]"
 					onClick={() => setboardSize(5)}
 				>
 					5x5
